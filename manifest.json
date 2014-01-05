@@ -11,11 +11,11 @@
 	{
                 "matches":["*://weibo.com/*/home*"],
                 "css":["style.css"],
-                "js":["jquery.js","contentscript.js"],
-                "run_at":"document_end"
+                "js":["jquery.js","contentscript.js"]
 	}
   ],
   "permissions":[
-	  "*://code.jquery.com/*"
+    "storage",
+    "*://code.jquery.com/*"
   ]
 }
