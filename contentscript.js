@@ -41,7 +41,7 @@
     var that={
         init:function(){
             that._style();
-            that._handler_readed();
+            that._readed_handle();
             that._event();
             that._hotkey();
         },
@@ -60,6 +60,7 @@
                 "color":"#808080"
             });
         },
+        // !deprecated
         _handler_readed:function(){
             var _READED_INIT_HANDLED=false;
             var schd= null;
@@ -86,6 +87,34 @@
             }
             action();
             schd = setInterval(action,3000);
+        },
+        _readed_handle:function(handler){
+            var action = function(){
+                var current_feeds = $(".WB_feed_type[mid]")
+                log("current feeds num: "+current_feeds.length);
+                var unreaded_num = 0;
+                if(current_feeds.length>0){
+                    data.weibo.get_readed(function(ids){
+                        current_feeds.each(function(i){
+                            var ele = $(this).next();
+                            if(!ele || ele.hasClass("data-readed-handled")) return;
+                            ele.addClass("data-readed-handled");
+                            var mid = ele.attr('mid');
+                            if(mid && ids.indexOf(mid)>0){
+                                if(handler && typeof handler == 'function')
+                                    handler($(".WB_feed_type[mid='"+mid+"']"));
+                                else
+                                    $(".WB_feed_type[mid='"+mid+"']").hide();
+                            }else{
+                                unreaded_num++;
+                            }
+                        });
+                        log("unreaded feeds num: "+unreaded_num+"/"+current_feeds.length);
+                    });
+                }
+            };
+            setTimeout(action,500);
+            var schd = setInterval(action,5000);
         },
         _event:function(){
             $('.gn_setting[node-type="editor"]').on('click',function(){
