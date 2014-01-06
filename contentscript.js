@@ -1,7 +1,7 @@
 //console.log($CONFIG);
 (function(){
 
-    var DEBUG = true;
+    var DEBUG = true, LOCK =false;
     var log = function(msg){
         if(DEBUG) console.log(msg);
     }
@@ -25,6 +25,9 @@
         ".B_index .W_main_l":{
             "padding":"0 0"
         },
+		  ".B_index .W_main_c":{
+			  "padding-top":"0px"
+		  },
         ".B_index .group_read":{
             "margin":"0 0 11px"
         },
@@ -43,7 +46,13 @@
             "border-bottom":"1px solid #e8e8e8",
             "border-top":"1px solid #e8e8e8",
             "margin":"0 0"
-        }
+        },
+		  ".send_weibo .input":{
+			  	"height":"35px"
+			},
+			".send_weibo .input .input_detail":{
+				"height":"30px"
+			}
     };
 
     var $EVENT={
@@ -66,6 +75,19 @@
                 // $(this).find("[action-type='feed_list_shield_by_mid']").click();
             }
         },
+		 ".send_weibo .input":{
+			 "focusin":function(){
+				 $(this).css("height","");
+				 $("#pl_content_publisherTop .func_area").fadeIn();
+				 $(".send_weibo .input .input_detail").css("height","");
+			 },
+			 "focusout":function(){
+				 if($(this).find("textarea").val().length > 0) return;
+				$(this).css("height","35px");
+	  			$(".send_weibo .input .input_detail").css("height","30px");
+				$("#pl_content_publisherTop .func_area").hide();
+			 }
+		  },
         /*
         "#pl_content_homeFeed":{
             "click":function(){
@@ -128,10 +150,12 @@
             for(var sel in $CSS){
                 $(sel).css($CSS[sel]);
             }
+				$(".send_weibo .input .input_detail").attr("placeholder","分享微博新鲜事");
         },
         _job:function(handler){
             var action = function(){
                 log("backgroud job running ...");
+					 if(LOCK) return;
                 that._style();
                 that._event();
                 /*

@@ -8,7 +8,6 @@
 .W_main_l{
     padding: 0 0;
 }
-
 #pl_leftnav_common{
     background-color:#fff;
 	border-radius: 3px;
@@ -72,13 +71,37 @@ div[node-type="left_fixed"]{
 	background-clip: padding-box;
 }
 
+
 #pl_content_publisherTop{
+   /*display:none;*/
+}
+
+#pl_content_publisherTop  .title_area{
+	display:none;
+}
+
+#pl_content_publisherTop  .arrow{
+	display:none;
+}
+
+#pl_content_publisherTop   .func_area {
+	display:none;
+}
+
+
+#pl_content_homeFeed  .right_item:first-child{
     display:none;
 }
 
-#pl_content_homeFeed .right_item:first-child{
-    display:none;
+.send_weibo .input.clicked{
+	height:auto;
+	min-height:80px;
 }
+.send_weibo .input.clicked .input_detail{
+	height:auto;	
+	min-height:70px;
+}
+
 
 /*Hide bottom ADs*/
 [ad-data]{
