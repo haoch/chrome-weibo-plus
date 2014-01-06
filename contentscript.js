@@ -37,7 +37,13 @@
             "border-bottom":"none",
             "padding": 0
         },
-        ".W_tabarrow_big":{"display":"none"}
+        ".W_tabarrow_big":{"display":"none"},
+        ".WB_feed a.notes":{
+            "background-color":"#f5f5f5",
+            "border-bottom":"1px solid #e8e8e8",
+            "border-top":"1px solid #e8e8e8",
+            "margin":"0 0"
+        }
     };
 
     var $EVENT={
