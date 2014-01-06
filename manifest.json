@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "BeautyWeibo",
+  "name": "WeiboPlus",
   "description": "A beautiful and productive Weibo extension, making weibo
   pages more beautiful, clear and powerful",
   "version": "0.0.1",
   "browser_action": {
-	  "default_title":"Beauty Weibo"
+	  "default_title":"WeiboPlus"
   },
   "content_scripts":[
 	{

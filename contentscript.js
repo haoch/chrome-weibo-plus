@@ -47,6 +47,9 @@
             "border-top":"1px solid #e8e8e8",
             "margin":"0 0"
         },
+		  ".B_index .send_weibo":{
+		  		"padding": "0 10px 11px"
+		  },
 		  ".send_weibo .input":{
 			  	"height":"35px"
 			},
@@ -77,12 +80,18 @@
         },
 		 ".send_weibo .input":{
 			 "focusin":function(){
+				 LOCK=true;
 				 $(this).css("height","");
 				 $("#pl_content_publisherTop .func_area").fadeIn();
 				 $(".send_weibo .input .input_detail").css("height","");
 			 },
 			 "focusout":function(){
-				 if($(this).find("textarea").val().length > 0) return;
+				if($(this).find("textarea").val().length > 0) {
+					LOCK =true;
+					$(this).addClass("clicked");
+					return;
+				}
+				LOCK=false;
 				$(this).css("height","35px");
 	  			$(".send_weibo .input .input_detail").css("height","30px");
 				$("#pl_content_publisherTop .func_area").hide();

@@ -77,7 +77,9 @@ div[node-type="left_fixed"]{
 }
 
 #pl_content_publisherTop  .title_area{
-	display:none;
+	margin-bottom:-10px;
+}
+#pl_content_publisherTop  .title_area .num .S_txt2{
 }
 
 #pl_content_publisherTop  .arrow{
@@ -88,14 +90,13 @@ div[node-type="left_fixed"]{
 	display:none;
 }
 
-
 #pl_content_homeFeed  .right_item:first-child{
     display:none;
 }
 
 .send_weibo .input.clicked{
 	height:auto;
-	min-height:80px;
+	min-height:88px;
 }
 .send_weibo .input.clicked .input_detail{
 	height:auto;	
