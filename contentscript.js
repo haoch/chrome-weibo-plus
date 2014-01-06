@@ -1,16 +1,86 @@
 //console.log($CONFIG);
 (function(){
+
     var DEBUG = true;
     var log = function(msg){
         if(DEBUG) console.log(msg);
     }
+
+    // ========================================
+    // Additional TOP priority css stylesheets
+    // ========================================
+    var $CSS={
+        ".WB_feed .WB_feed_type":{
+            "margin":"0",
+            "padding":"20px 10px",
+            "border-bottom":"1px solid #e8e8e8"
+        },
+        ".WB_feed .WB_detail":{
+            
+        },
+        ".W_main":{
+            "background-image":"none",
+            // "background-color":"#fff"
+        },
+        ".B_index .W_main_l":{
+            "padding":"0 0"
+        },
+        ".B_index .group_read":{
+            "margin":"0 0 11px"
+        },
+        ".global_footer":{
+            "background-color":"none",
+            "background-image":"none",
+            "color":"#808080"
+        },
+        ".WB_feed .WB_feed_datail":{
+            "border-bottom":"none",
+            "padding": 0
+        },
+        ".W_tabarrow_big":{"display":"none"}
+    };
+
+    var $EVENT={
+        ".WB_feed_type":{
+            /*
+            "mousedown":function(e){
+                $(this).find('[action-type=feed_list_comment]').click();
+                // $(this).clearQueue();
+            },*/
+            "dblclick":function(){
+                var mid = $(this).attr('mid');
+                //data.weibo.add_readed(mid);
+                $(this).slideUp();
+                // $(this).find("[action-type='feed_list_shield']").click();
+                // log($(this).find("[action-type='feed_list_shield']"));
+
+                // $(this).find("[action-type='feed_list_shield']").click();
+                // $(this).find("[action-type='feed_list_shield_by_mid']").click();
+                // log($(this).find("[action-type='feed_list_shield_by_mid']"));
+                // $(this).find("[action-type='feed_list_shield_by_mid']").click();
+            }
+        },
+        /*
+        "#pl_content_homeFeed":{
+            "click":function(){
+                $(".WB_feed_type").on('dblclick',$EVENT[".WB_feed .WB_feed_type"]['dblclick']);
+            }
+        },
+        */
+        ".gn_setting[node-type=editor]":{
+            "click":function(){
+                $("#pl_content_publisherTop").show();
+            }
+        }
+    }
+
     var data={
         weibo:{
             add_readed:function(id){
                 chrome.storage.sync.get(function(items){
                     var readed = items["weibo.readed"];
                     if(chrome.runtime.lastError){
-                        log("Error:"+runtime.lastError);
+                        log("Error:"+chrome.runtime.lastError);
                     }
                     if(!readed){
                         readed = [];
@@ -23,7 +93,7 @@
                     readed.push(id);
                     chrome.storage.sync.set({"weibo.readed":readed},function(){
                         if(chrome.runtime.lastError){
-                            log("Error:"+runtime.lastError);
+                            log("Error:",chrome.runtime.lastError);
                         }
                     })
                 });
@@ -31,65 +101,34 @@
             get_readed:function(callback){
                 chrome.storage.sync.get(function(items){
                     if(chrome.runtime.lastError){
-                        console.log("Error:"+runtime.lastError);
+                        console.log("Error:",runtime.lastError);
                     }
                     callback(items["weibo.readed"]);
                 })
             }
         }
     };
+
     var that={
         init:function(){
             that._style();
-            that._readed_handle();
             that._event();
             that._hotkey();
+
+            that._job();
+            return that;
         },
        _style:function(){
-            $(".W_main").css({
-                "background-image":"none",
-                // "background-color":"#fff"
-            })
-            $(".B_index .W_main_l").css({
-                "padding":"0 0"
-            });
-            // $(".W_main_c").css("width","800px");
-            $(".global_footer").css({
-                "background-color":"none",
-                "background-image":"none",
-                "color":"#808080"
-            });
-        },
-        // !deprecated
-        _handler_readed:function(){
-            var _READED_INIT_HANDLED=false;
-            var schd= null;
-            var action=function(){
-                log("handling readed");
-                data.weibo.get_readed(function(ids){
-                    if(!ids) return;
-                    if(ids.length==0) _READED_INIT_HANDLED = true;
-
-                    ids.forEach(function(i){
-                        if($(".WB_feed_type[mid='"+i+"']").length){
-                            _READED_INIT_HANDLED = true;
-                        }
-                        $(".WB_feed_type[mid='"+i+"']").slideUp();
-                        //$(".WB_feed_type[mid='"+i+"']").css({"background-color":"red"});
-                    });
-                    if(_READED_INIT_HANDLED){
-                        clearInterval(schd);
-                        var note = $('<a node-type="feed_list_histBar" action-type="feed_list_histBar" class="notes" href="javascript:void(0);" suda-data="key=tblog_home_hist&amp;value=feed_hist_weibo">您已阅读'+ids.length+'条微博，点击查看历史</a>');
-                        note.prependTo(".WB_feed");
-                        setTimeout(function(){ note.remove(); },3000);
-                    }
-                });
+            for(var sel in $CSS){
+                $(sel).css($CSS[sel]);
             }
-            action();
-            schd = setInterval(action,3000);
         },
-        _readed_handle:function(handler){
+        _job:function(handler){
             var action = function(){
+                log("backgroud job running ...");
+                that._style();
+                that._event();
+                /*
                 var current_feeds = $(".WB_feed_type[mid]")
                 log("current feeds num: "+current_feeds.length);
                 var unreaded_num = 0;
@@ -111,25 +150,18 @@
                         });
                         log("unreaded feeds num: "+unreaded_num+"/"+current_feeds.length);
                     });
-                }
+                }*/
             };
             setTimeout(action,500);
-            var schd = setInterval(action,5000);
+            var schd = setInterval(action,3000);
         },
         _event:function(){
-            $('.gn_setting[node-type="editor"]').on('click',function(){
-                $("#pl_content_publisherTop").show();
-            });
-            var bind_read_event= function(){
-                $(".WB_feed_type").on('dblclick',function(){
-                    var mid = $(this).attr('mid');
-                    data.weibo.add_readed(mid);
-                    $(this).slideUp();
-                });
+            for(var i in $EVENT){
+                log("Initializing events: "+i);
+                for(var j in $EVENT[i]){
+                    $(i).on(j,$EVENT[i][j])
+                }
             }
-            $("#pl_content_homeFeed").on("click",function(e){
-                bind_read_event();
-            });
         },
         _hotkey:function(){
         }

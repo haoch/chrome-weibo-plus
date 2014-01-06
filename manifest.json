@@ -9,9 +9,9 @@
   },
   "content_scripts":[
 	{
-                "matches":["*://weibo.com/*/home*"],
-                "css":["style.css"],
-                "js":["jquery.js","contentscript.js"]
+    "matches":["*://weibo.com/*/home*","*://www.weibo.com/*/home*"],
+    "css":["style.css"],
+    "js":["jquery.js","contentscript.js"]
 	}
   ],
   "permissions":[
