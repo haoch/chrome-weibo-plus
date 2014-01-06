@@ -3,7 +3,10 @@ Weibo Plus Chrome Extension
 
 A beautiful and productive Weibo extension for [Chrome](http://chrome.google.com), making weibo   pages more beautiful, clear and powerful
 
-Current version: `0.0.1`
+Current version: `0.0.1-beta`
+
+![默认页面](https://raw.github.com/haoch/chrome-weibo-plus/doc/images/screenshot-0.png)
+![输入页面](https://raw.github.com/haoch/chrome-weibo-plus/doc/images/screenshot-1.png)
 
 Installation
 ------------
