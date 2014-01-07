@@ -31,6 +31,11 @@
         ".B_index .group_read":{
             "margin":"0 0 11px"
         },
+        "#Box_right":{
+            "width":"215px",
+            "margin-right":"-10px",
+            "position":"relative"
+        },
         ".global_footer":{
             "background-color":"none",
             "background-image":"none",
@@ -47,15 +52,15 @@
             "border-top":"1px solid #e8e8e8",
             "margin":"0 0"
         },
-		  ".B_index .send_weibo":{
-		  		"padding": "0 10px 11px"
-		  },
-		  ".send_weibo .input":{
-			  	"height":"35px"
-			},
-			".send_weibo .input .input_detail":{
-				"height":"30px"
-			}
+		".B_index .send_weibo":{
+		    "padding": "0 10px 11px"
+		},
+		".send_weibo .input":{
+			"height":"35px"
+		},
+		".send_weibo .input .input_detail":{
+			"height":"30px"
+		}
     };
 
     var $EVENT={
@@ -148,18 +153,32 @@
 
     var that={
         init:function(){
+            that._html();
             that._style();
             that._event();
             that._hotkey();
-
             that._job();
             return that;
         },
+       _html:function(){
+            log("rm #Box_right");
+            // $("#Box_right").children().remove();
+            log("loading content");
+
+            // $("#Box_right").append($("img").attr("style","width:240,height:auto").attr("src","http://wbshub.herokuapp.com/webshot?url=http://www.baidu.com"))
+            /*
+            var req = new XMLHttpRequest();
+            req.open("GET", "http://wbshub.herokuapp.com/webshot?url=http://www.baidu.com", true);
+            req.onload = function(e){
+                console.log(e);
+                $("#Box_right").html($("img").append(e.target.response);
+            };
+            req.send(null);
+            */
+       },
        _style:function(){
-            for(var sel in $CSS){
-                $(sel).css($CSS[sel]);
-            }
-				$(".send_weibo .input .input_detail").attr("placeholder","分享微博新鲜事");
+            for(var sel in $CSS) $(sel).css($CSS[sel]);
+			$(".send_weibo .input .input_detail").attr("placeholder","分享微博新鲜事");
         },
         _job:function(handler){
             var action = function(){

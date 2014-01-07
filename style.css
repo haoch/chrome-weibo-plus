@@ -7,13 +7,18 @@
 /*Left navs*/
 .W_main_l{
     padding: 0 0;
+    visibility: hidden;
 }
+
+.W_main_l:hover{
+
+}
+
 #pl_leftnav_common{
     background-color:#fff;
 	border-radius: 3px;
 	background-clip: padding-box;
 }
-
 div[node-type="left_fixed"]{
     background-color:#fff;
 	border-radius: 3px;
@@ -42,7 +47,6 @@ div[node-type="left_fixed"]{
 #pl_content_biztips{
 	display:none;
 }
-
 /**
  * Weibo items
  * */

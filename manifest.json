@@ -16,6 +16,7 @@
   ],
   "permissions":[
     "storage",
-    "*://code.jquery.com/*"
+    "*://code.jquery.com/*",
+    "http://wbshub.herokuapp.com/*"
   ]
 }
