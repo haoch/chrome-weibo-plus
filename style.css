@@ -9,22 +9,20 @@
     padding: 0 0;
     visibility: hidden;
 }
-
 .W_main_l:hover{
 
 }
-
 #pl_leftnav_common{
     background-color:#fff;
 	border-radius: 3px;
 	background-clip: padding-box;
 }
+
 div[node-type="left_fixed"]{
     background-color:#fff;
 	border-radius: 3px;
 	background-clip: padding-box;
 }
-
 #pl_leftnav_app{
     background-color:#fff;
 	border-radius: 3px;
@@ -58,8 +56,11 @@ div[node-type="left_fixed"]{
 	background-color:#f5f5f5;
 }
 .WB_feed_new{
+	background-color:#f5f5f5;
 }
-
+.WB_feed_new:hover{
+	background-color:#fff;
+}
 .WB_feed .WB_media_list {
 	display: none;
 }
@@ -107,9 +108,7 @@ div[node-type="left_fixed"]{
 	min-height:70px;
 }
 
-
 /*Hide bottom ADs*/
 [ad-data]{
 display:none;
 }
-

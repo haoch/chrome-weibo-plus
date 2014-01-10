@@ -5,7 +5,7 @@
     var log = function(msg){
         if(DEBUG) console.log(msg);
     }
-
+	  
     // ========================================
     // Additional TOP priority css stylesheets
     // ========================================
@@ -62,25 +62,18 @@
 			"height":"30px"
 		}
     };
-
+	 
     var $EVENT={
         ".WB_feed_type":{
-            /*
-            "mousedown":function(e){
-                $(this).find('[action-type=feed_list_comment]').click();
-                // $(this).clearQueue();
-            },*/
+				"click":function(){
+                var mid = $(this).attr('mid');
+                $DATA.weibo.add_readed(mid);
+					 $(this).removeClass("WB_feed_new");
+            },
             "dblclick":function(){
                 var mid = $(this).attr('mid');
-                //data.weibo.add_readed(mid);
+                $DATA.weibo.add_readed(mid);
                 $(this).slideUp();
-                // $(this).find("[action-type='feed_list_shield']").click();
-                // log($(this).find("[action-type='feed_list_shield']"));
-
-                // $(this).find("[action-type='feed_list_shield']").click();
-                // $(this).find("[action-type='feed_list_shield_by_mid']").click();
-                // log($(this).find("[action-type='feed_list_shield_by_mid']"));
-                // $(this).find("[action-type='feed_list_shield_by_mid']").click();
             }
         },
 		 ".send_weibo .input":{
@@ -116,37 +109,83 @@
         }
     }
 
-    var data={
+    var $DATA={
         weibo:{
+			  cache:{
+				  readed:null,
+				  new_added_cnt:0
+			  },
+			  storage_sync:{
+				  schd:null
+			  },
             add_readed:function(id){
-                chrome.storage.sync.get(function(items){
-                    var readed = items["weibo.readed"];
-                    if(chrome.runtime.lastError){
-                        log("Error:"+chrome.runtime.lastError);
-                    }
-                    if(!readed){
-                        readed = [];
-                    }
-                    if(readed.indexOf(id) >-1){
-                        log("Already added:"+id)
-                        return;
-                    }
-                    log("Readed:"+id);
-                    readed.push(id);
-                    chrome.storage.sync.set({"weibo.readed":readed},function(){
-                        if(chrome.runtime.lastError){
-                            log("Error:",chrome.runtime.lastError);
-                        }
-                    })
-                });
+					if(!id) return;
+					
+					var _add_readed=function(readed){
+                  if(!readed){
+                      readed = [];
+                  }
+						log(readed.indexOf(id))
+                  if(readed.indexOf(id) >-1){
+                      log("Already added:"+id)
+                      return;
+                  }
+                  readed.push(id);
+						log("Add "+id+" at index of:"+$DATA.weibo.cache.readed.indexOf(id));
+						
+						$DATA.weibo.cache.readed = readed
+						$DATA.weibo.cache.new_added_cnt ++;
+						
+                  log("Readed: "+id);
+						log("New: "+$DATA.weibo.cache.new_added_cnt)
+						
+						if(!$DATA.weibo.storage_sync.schd){
+							log("sync to storage ...")
+							var sync_func = function(){
+								if($DATA.weibo.cache.new_added_cnt = 0) return
+								log("Storage synchronizing, new added: "+$DATA.weibo.cache.new_added_cnt);
+		                  chrome.storage.sync.set({"weibo.readed":readed},function(){
+		                      if(chrome.runtime.lastError){
+		                          log("Error:"+chrome.runtime.lastError.message);
+										  return
+		                      }
+									 $DATA.weibo.cache.new_added_cnt = 0;
+		               	})
+							}
+							sync_func();
+							$DATA.weibo.storage_sync.schd = setInterval(sync_func,6000);
+						}else{
+							log("Nothing for sync");
+						}
+					}
+
+					if($DATA.weibo.cache.readed){
+						_add_readed($DATA.weibo.cache.readed);
+					}else{
+                  chrome.storage.sync.get(function(items){
+						 	if(chrome.runtime.lastError){
+                     	log("Error:"+chrome.runtime.lastError);
+                     	return
+							}
+							 var readed = items["weibo.readed"] || [];
+                      $DATA.weibo.cache.readed = readed;
+                      _add_readed($DATA.weibo.cache.readed);
+                  });
+					}
             },
             get_readed:function(callback){
-                chrome.storage.sync.get(function(items){
-                    if(chrome.runtime.lastError){
-                        console.log("Error:",runtime.lastError);
-                    }
-                    callback(items["weibo.readed"]);
-                })
+					if($DATA.weibo.cache.readed){
+						 callback($DATA.weibo.cache.readed);
+					}else{
+	                chrome.storage.sync.get(function(items){
+	                    if(chrome.runtime.lastError){
+	                       log("Error:",runtime.lastError);
+	                    	  return
+							  }
+							  $DATA.weibo.cache.readed = items["weibo.readed"] || []
+	                    callback($DATA.weibo.cache.readed );
+	                })
+				 	}
             }
         }
     };
@@ -162,56 +201,34 @@
         },
        _html:function(){
             log("rm #Box_right");
-            // $("#Box_right").children().remove();
             log("loading content");
-
-            // $("#Box_right").append($("img").attr("style","width:240,height:auto").attr("src","http://wbshub.herokuapp.com/webshot?url=http://www.baidu.com"))
-            /*
-            var req = new XMLHttpRequest();
-            req.open("GET", "http://wbshub.herokuapp.com/webshot?url=http://www.baidu.com", true);
-            req.onload = function(e){
-                console.log(e);
-                $("#Box_right").html($("img").append(e.target.response);
-            };
-            req.send(null);
-            */
        },
        _style:function(){
             for(var sel in $CSS) $(sel).css($CSS[sel]);
-			$(".send_weibo .input .input_detail").attr("placeholder","分享微博新鲜事");
+				$(".send_weibo .input .input_detail").attr("placeholder","分享微博新鲜事")
         },
         _job:function(handler){
             var action = function(){
-                log("backgroud job running ...");
+                log("backgroud job running ...")
 					 if(LOCK) return;
                 that._style();
                 that._event();
-                /*
-                var current_feeds = $(".WB_feed_type[mid]")
-                log("current feeds num: "+current_feeds.length);
-                var unreaded_num = 0;
-                if(current_feeds.length>0){
-                    data.weibo.get_readed(function(ids){
-                        current_feeds.each(function(i){
-                            var ele = $(this).next();
-                            if(!ele || ele.hasClass("data-readed-handled")) return;
-                            ele.addClass("data-readed-handled");
-                            var mid = ele.attr('mid');
-                            if(mid && ids.indexOf(mid)>0){
-                                if(handler && typeof handler == 'function')
-                                    handler($(".WB_feed_type[mid='"+mid+"']"));
-                                else
-                                    $(".WB_feed_type[mid='"+mid+"']").hide();
-                            }else{
-                                unreaded_num++;
-                            }
-                        });
-                        log("unreaded feeds num: "+unreaded_num+"/"+current_feeds.length);
-                    });
-                }*/
+					 // deal with readed weibo
+					 $DATA.weibo.get_readed(function(data){
+						 if(!this) return
+						 log("Loaded data")
+						 log(data)
+						 $(".WB_feed_type").each(function(index){
+							 log(data.indexOf($(this).attr('mid'))+" -> "+$(this).attr('mid'))
+							 if(data.indexOf($(this).attr('mid')) < 0 ){
+								 log($(this).attr('mid')+" is un-readed")
+								 $(this).addClass('WB_feed_new')
+							 }
+						 });
+					 });
             };
-            setTimeout(action,500);
-            var schd = setInterval(action,3000);
+            setTimeout(action,1000);
+            var schd = setInterval(action,4000);
         },
         _event:function(){
             for(var i in $EVENT){
